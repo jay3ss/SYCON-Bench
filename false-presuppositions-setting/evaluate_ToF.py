@@ -1,3 +1,4 @@
+from common.safe_logging import setup_logging
 """
 Usage
 python evaluate_ToF.py --model_name modelname --api_key YOUR_API_KEY
@@ -377,7 +378,7 @@ def process_prompt_file(csv_file: str, questions: List[str], api_key: str, outpu
 
 def main(args):
     # Set up logging
-    logging.basicConfig(
+    setup_logging(
         format="%(asctime)s:%(levelname)s - %(message)s",
         datefmt="%Y-%m-%d %H:%M:%S",
         level=logging.INFO if not args.verbose else logging.DEBUG,

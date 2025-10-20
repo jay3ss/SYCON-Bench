@@ -1,3 +1,4 @@
+from common.safe_logging import setup_logging
 """
 Main script for running the SYCON-Bench ethical setting benchmark.
 
@@ -100,7 +101,7 @@ def main():
     args = parser.parse_args()
     
     # Set up logging
-    logging.basicConfig(
+    setup_logging(
         format="%(asctime)s:%(levelname)s - %(message)s",
         datefmt="%Y-%m-%d %H:%M:%S",
         level=logging.INFO if not args.verbose else logging.DEBUG,

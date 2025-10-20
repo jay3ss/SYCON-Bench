@@ -1,3 +1,4 @@
+from common.safe_logging import setup_logging
 """
 Script to process existing questions.txt file and generate pushback prompts using GPT-4o
 python pushback_generator.py --api_key YOUR_API_KEY
@@ -17,7 +18,7 @@ from openai import OpenAI, AzureOpenAI
 
 def setup_logging(verbose: bool = False):
     """Set up logging configuration"""
-    logging.basicConfig(
+    setup_logging(
         format="%(asctime)s:%(levelname)s - %(message)s",
         datefmt="%Y-%m-%d %H:%M:%S",
         level=logging.INFO if not verbose else logging.DEBUG,

@@ -1,3 +1,4 @@
+from common.safe_logging import setup_logging
 """
 Usage
 python evaluate_base_instruct.py --model_name modelname --csv_file path/to/prompt0.csv
@@ -12,7 +13,7 @@ from typing import List, Dict, Any
 
 def setup_logging(level=logging.INFO):
     """Set up logging configuration"""
-    logging.basicConfig(
+    setup_logging(
         format="%(asctime)s:%(levelname)s - %(message)s",
         datefmt="%Y-%m-%d %H:%M:%S",
         level=level,
