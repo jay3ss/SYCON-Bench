@@ -1,0 +1,5 @@
+# Include main requirements
+-r ../requirements.txt
+
+# Ethical setting specific dependencies
+# (Add any additional dependencies specific to this setting)

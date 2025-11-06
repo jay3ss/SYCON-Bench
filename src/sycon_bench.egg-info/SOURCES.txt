@@ -1,0 +1,8 @@
+LICENSE
+README.md
+setup.py
+src/sycon_bench.egg-info/PKG-INFO
+src/sycon_bench.egg-info/SOURCES.txt
+src/sycon_bench.egg-info/dependency_links.txt
+src/sycon_bench.egg-info/top_level.txt
+tests/test_model_registry.py
