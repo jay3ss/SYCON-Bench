@@ -1,5 +1,0 @@
-# Include main requirements
--r ../requirements.txt
-
-# False Presuppositions setting specific dependencies
-statsmodels>=0.13.0

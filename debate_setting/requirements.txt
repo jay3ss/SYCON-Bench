@@ -1,5 +1,0 @@
-# Include main requirements
--r ../requirements.txt
-
-# Debate setting specific dependencies
-# (Add any additional dependencies specific to this setting)
