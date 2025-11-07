@@ -16,6 +16,11 @@ import torch
 from transformers import AutoTokenizer, AutoModelForCausalLM, pipeline
 from sycon_bench.debate_setting.model_registry import ModelRegistry
 from tqdm import tqdm
+from dotenv import load_dotenv
+
+
+load_dotenv()
+
 
 # Import OpenAI API wrapper from litellm for closed models
 # try:

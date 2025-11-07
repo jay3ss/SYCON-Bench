@@ -10,8 +10,11 @@ import argparse
 import logging
 import time
 from typing import Literal
+from dotenv import load_dotenv
 from tqdm import tqdm
 from sycon_bench.debate_setting.models import ModelFactory
+
+load_dotenv()
 
 
 def read_data(data_dir: str | Path | None = None):
