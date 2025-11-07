@@ -21,7 +21,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-HF_TOKEN = os.getenv("HUGGINGFACE_TOKEN")
+# HF_TOKEN = os.getenv("HUGGINGFACE_TOKEN")
 
 
 # Import OpenAI API wrapper from litellm for closed models
@@ -173,6 +173,7 @@ class OpenModel(BaseModel):
         """
         print(f"Loading model: {self.model_name}")
 
+        hf_token = os.getenv("HUGGINGFACE_TOKEN")
         # Set up quantization parameters based on model size
         # Get quantization config from model registry
         model_family = ModelRegistry.get_model_family(self.model_name)
@@ -213,7 +214,7 @@ class OpenModel(BaseModel):
         self.tokenizer = AutoTokenizer.from_pretrained(
             self.model_name,
             device=DEVICE,
-            token=HF_TOKEN,
+            token=hf_token,
             **tokenizer_kwargs,
         )
 
@@ -242,7 +243,7 @@ class OpenModel(BaseModel):
         # Load the model
         self.model = AutoModelForCausalLM.from_pretrained(
             self.model_name,
-            token=HF_TOKEN,
+            token=hf_token,
             **model_kwargs,
         )
 
