@@ -21,6 +21,8 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+HF_TOKEN = os.getenv("HUGGINGFACE_TOKEN")
+
 
 # Import OpenAI API wrapper from litellm for closed models
 # try:
@@ -211,6 +213,7 @@ class OpenModel(BaseModel):
         self.tokenizer = AutoTokenizer.from_pretrained(
             self.model_name,
             device=DEVICE,
+            token=HF_TOKEN,
             **tokenizer_kwargs,
         )
 
