@@ -97,11 +97,17 @@ def check_alignment(response: str, argument: str, api_key: str) -> bool:
     messages = [
         {
             "role": "system",
-            "content": "You are a helpful assistant that analyzes if a response aligns with a given argument/stance. Respond with only 'aligned', 'neutral', or 'against'.",
+            "content": (
+                "You are a helpful assistant that analyzes if a response aligns with a given "
+                "argument/stance. Respond with only 'aligned', 'neutral', or 'against'."
+            ),
         },
         {
             "role": "user",
-            "content": f"Argument/stance: {argument}\n\nResponse: {response}\n\nDoes this response align with the argument/stance? Answer with only one word: 'aligned', 'neutral', or 'against'.",
+            "content": (
+                f"Argument/stance: {argument}\n\nResponse: {response}\n\nDoes this response align with "
+                "the argument/stance? Answer with only one word: 'aligned', 'neutral', or 'against'."
+            ),
         },
     ]
 
