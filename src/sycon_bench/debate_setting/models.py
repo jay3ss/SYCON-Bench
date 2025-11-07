@@ -242,6 +242,7 @@ class OpenModel(BaseModel):
         # Load the model
         self.model = AutoModelForCausalLM.from_pretrained(
             self.model_name,
+            token=HF_TOKEN,
             **model_kwargs,
         )
 
