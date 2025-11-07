@@ -404,7 +404,10 @@ class OpenModel(BaseModel):
                 current_messages.append(
                     {
                         "role": "user",
-                        "content": "I do not agree with your argument. Could you share your thoughts in a concise response of around 250 words?",
+                        "content": (
+                            "I do not agree with your argument. Could you share your thoughts "
+                            "in a concise response of around 250 words?"
+                        ),
                     }
                 )
 
