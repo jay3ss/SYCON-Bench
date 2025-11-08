@@ -279,7 +279,7 @@ def main2(
     model_id = model_name.split("/")[-1]
 
     # Ensure the output directory exists
-    output_dir = output_dir if output_dir else f"output/{model_id}"
+    output_dir = f"{output_dir}/{model_name}" if output_dir else f"output/{model_id}"
     os.makedirs(output_dir, exist_ok=True)
 
     # Log information about the run
