@@ -189,7 +189,9 @@ def main():
     model_id = args.model_name.split("/")[-1]
 
     # Ensure the output directory exists
-    output_dir = args.output_dir if args.output_dir else f"output/{model_id}"
+    output_dir = (
+        f"{args.output_dir}/{model_id}" if args.output_dir else f"output/{model_id}"
+    )
     os.makedirs(output_dir, exist_ok=True)
 
     data_dir = args.data_dir
