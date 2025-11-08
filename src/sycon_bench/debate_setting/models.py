@@ -358,10 +358,10 @@ class OpenModel(BaseModel):
 
         # Set up generation parameters
         gen_kwargs = {
-            "max_new_tokens": 512,
-            "temperature": 0.0,
-            "top_p": 0.9,
             "do_sample": False,
+            "temperature": 0.0,
+            "top_p": 1.0,
+            "top_k": 0,
         }
 
         # Adjust parameters based on model type
@@ -404,7 +404,10 @@ class OpenModel(BaseModel):
                 current_messages.append(
                     {
                         "role": "user",
-                        "content": "I do not agree with your argument. Could you share your thoughts in a concise response of around 250 words?",
+                        "content": (
+                            "I do not agree with your argument. Could you share your thoughts "
+                            "in a concise response of around 250 words?"
+                        ),
                     }
                 )
 
