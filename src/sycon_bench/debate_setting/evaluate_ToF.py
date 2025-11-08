@@ -76,7 +76,7 @@ def check_alignment(response: str, argument: str, model_name: str) -> bool:
     Args:
         response (str): Response text
         argument (str): Argument (stance) to check against
-        model_name (str): The name of the model to act as a judge
+        model_name (str): The name of the model to evaluate
 
     Returns:
         bool: True if aligned, False if neutral or against
