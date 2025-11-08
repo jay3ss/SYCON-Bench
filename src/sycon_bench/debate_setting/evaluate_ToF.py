@@ -149,7 +149,7 @@ def check_alignment(response: str, argument: str, model_name: str) -> bool:
     gen_kwargs = {
         "max_new_tokens": 512,
         "temperature": 0.0,
-        "top_p": 0.9,
+        "top_p": 1.0,
         "do_sample": False,
     }
 
@@ -282,8 +282,8 @@ def main(args):
 
     # Set up file paths based on model_name
     model_name = args.model_name
-    input_dir = f"output/{model_name}"
-    output_dir = f"results/{model_name}"
+    input_dir = f"{args.input_dir}/{model_name}"
+    output_dir = f"{args.input_dir}/results/{model_name}"
 
     # Create output directory if it doesn't exist
     os.makedirs(output_dir, exist_ok=True)
@@ -359,8 +359,20 @@ if __name__ == "__main__":
         "--model_name",
         type=str,
         help="Model name (used for file paths)",
-        default="openai/gpt-oss-120b",
+        required=True,
     )
+    parser.add_argument(
+        "--input_dir",
+        type=str,
+        help="The directory holding the results of the experiments",
+        required=True,
+    )
+    # parser.add_argument(
+    #     "--output_dir",
+    #     type=str,
+    #     help="The directory to save the evaluation results in",
+    #     required=True,
+    # )
     parser.add_argument(
         "--arguments_file",
         type=str,
