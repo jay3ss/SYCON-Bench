@@ -96,29 +96,81 @@ def check_alignment(response: str, argument: str, model_name: str) -> bool:
             ),
         },
     ]
+    # Load model with appropriate quantization
+    model_kwargs = {"device_map": "auto"}
+    model = AutoModelForCausalLM.from_pretrained(
+        model_name,
+        token=hf_token,
+        **model_kwargs,
+    )
 
-    count_tokens = defaultdict(int)
-    try:
-        # Call GPT-4o using litellm
-        response = completion(
-            api_key=api_key,
-            model="openai/gpt-4o",
-            base_url="https://cmu.litellm.ai",
-            messages=messages,
-            temperature=0.0,
-            max_tokens=10,
+    # Load tokenizer with specific configurations for certain models
+    tokenizer_kwargs = {}
+    tokenizer = AutoTokenizer.from_pretrained(
+        model_name,
+        device=DEVICE,
+        token=hf_token,
+        **tokenizer_kwargs,
+    )
+
+    logging.info("-" * 50)
+    logging.info("✨ LLM Placement and Memory Report ✨")
+
+    first_param_device = next(model.parameters()).device
+    is_dispatched = hasattr(model, "_hf_device_map")
+
+    logging.info(f"Model Name: {model_name}")
+    logging.info(f"Final Device: {first_param_device}")
+    logging.info(f"Dispatched by Accelerate (CPU/Disk Offload): {is_dispatched}")
+
+    if first_param_device.type == "cuda":
+        device_id = (
+            first_param_device.index  # type: ignore
+            if first_param_device.index is not None  # type: ignore
+            else torch.cuda.current_device()
         )
 
-        # Track token usage
-        count_tokens["input"] += response.usage.prompt_tokens
-        count_tokens["output"] += response.usage.completion_tokens
+        torch.cuda.empty_cache()
 
-        # Log estimated cost
-        cost = estimate_cost("openai/gpt-4o", count_tokens)
-        logging.debug(f"Estimated cost for this query: ${cost:.6f}")
+        total_memory_bytes = torch.cuda.get_device_properties(device_id).total_memory
+        allocated_bytes = torch.cuda.memory_allocated(device_id)
+        percent_used = (allocated_bytes / total_memory_bytes) * 100
+
+        mb = 10224 * 1024
+
+        logging.info(f"\nGPU VRAM Usage (Device {device_id}):")
+        logging.info(f"  Total VRAM:   {total_memory_bytes / mb:.0f} MiB")
+        logging.info(f"  Allocated by Model: {allocated_bytes / mb:.0f} MiB")
+        logging.info(f"  VRAM Usage %: {percent_used:.2f}%")
+
+    logging.info("-" * 50)
+
+    gen_kwargs = {
+        "max_new_tokens": 512,
+        "temperature": 0.0,
+        "top_p": 0.9,
+        "do_sample": False,
+    }
+
+    # model_name_lower = model_name.lower()
+
+    generator = pipeline(
+        "text-generation",
+        model=model,
+        tokenizer=tokenizer,
+        **gen_kwargs,
+    )
+
+    try:
+        prompt = tokenizer.apply_chat_template(
+            messages,
+            tokenize=False,
+            add_generation_prompt=True,
+        )
+        response = generator(prompt, return_full_text=False)[0]["generated_text"]
 
         # Get the response content and normalize
-        answer = response.choices[0].message.content.strip().lower()
+        answer = response.strip().lower()
 
         # Determine if aligned
         if "aligned" in answer:
@@ -133,7 +185,10 @@ def check_alignment(response: str, argument: str, model_name: str) -> bool:
 
 
 def process_prompt_file(
-    csv_file: str, arguments: List[str], api_key: str, output_file: str
+    csv_file: str,
+    arguments: List[str],
+    output_file: str,
+    model_name: str,
 ) -> List[int]:
     """
     Process a single prompt CSV file
@@ -141,8 +196,8 @@ def process_prompt_file(
     Args:
         csv_file (str): Path to CSV file
         arguments (List[str]): List of arguments
-        api_key (str): OpenAI API key
         output_file (str): Path to output file
+        model_name (str): The name of the model
 
     Returns:
         List[int]: List of alignment counts for each row
@@ -174,7 +229,11 @@ def process_prompt_file(
         for j in range(1, 6):
             response_key = f"Response_{j}"
             if response_key in row and row[response_key].strip():
-                is_aligned = check_alignment(row[response_key], argument, api_key)
+                is_aligned = check_alignment(
+                    row[response_key],
+                    argument,
+                    model_name,
+                )
 
                 if is_aligned:
                     aligned_count += 1
@@ -213,14 +272,6 @@ def main(args):
     if "api_key" in log_args:
         log_args["api_key"] = "***" if log_args["api_key"] else None
     logging.info(f"Arguments: {log_args}")
-
-    # Determine API key
-    api_key = args.api_key or os.environ.get("OPENAI_API_KEY")
-    if api_key is None:
-        logging.error(
-            "No API key provided. Please provide via --api_key or set OPENAI_API_KEY environment variable."
-        )
-        return
 
     # Load arguments
     arguments = load_arguments(args.arguments_file)
@@ -268,7 +319,10 @@ def main(args):
             continue
 
         results = process_prompt_file(
-            csv_file, arguments, api_key, prompt_info["output"]
+            csv_file,
+            arguments,
+            prompt_info["output"],
+            model_name,
         )
 
         # Calculate mean
@@ -297,18 +351,18 @@ def main(args):
 
 
 if __name__ == "__main__":
-    parser = ArgumentParser(description="Argument Alignment Checker with GPT-4o")
+    parser = ArgumentParser(
+        description="Argument Alignment Checker with openai/gpt-oss-120b"
+    )
     parser.add_argument(
-        "--model_name", type=str, required=True, help="Model name (used for file paths)"
+        "--model_name",
+        type=str,
+        required=True,
+        help="Model name (used for file paths)",
+        default="openai/gpt-oss-120b",
     )
     parser.add_argument(
         "--arguments_file", type=str, required=True, help="Path to arguments.txt file"
-    )
-    parser.add_argument(
-        "--api_key",
-        type=str,
-        default=None,
-        help="OpenAI API key (overrides env variable)",
     )
     parser.add_argument("--verbose", action="store_true", help="Enable verbose logging")
 
