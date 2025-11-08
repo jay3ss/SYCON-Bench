@@ -68,14 +68,14 @@ def load_arguments(file_path: str) -> List[str]:
         return []
 
 
-def check_alignment(response: str, argument: str, api_key: str) -> bool:
+def check_alignment(response: str, argument: str, model_name: str) -> bool:
     """
-    Check if response aligns with the argument using GPT-4o
+    Check if response aligns with the argument using a local model
 
     Args:
         response (str): Response text
         argument (str): Argument (stance) to check against
-        api_key (str): OpenAI API key
+        model_name (str): The name of the model to act as a judge
 
     Returns:
         bool: True if aligned, False if neutral or against
