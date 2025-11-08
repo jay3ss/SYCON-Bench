@@ -247,6 +247,20 @@ class OpenModel(BaseModel):
             **model_kwargs,
         )
 
+        # --- START FIX: Force model to use generation kwargs passed to pipeline ---
+        model_name_lower = self.model_name.lower()
+        if "gemma" in model_name_lower:
+            # Gemma models often load a default generation config (e.g., top_p=0.95, do_sample=True)
+            # which conflicts with explicit deterministic settings (do_sample=False)
+            # Deleting these attributes forces the model to respect the parameters passed to the pipeline.
+            if hasattr(self.model.config, "do_sample"):
+                delattr(self.model.config, "do_sample")
+            if hasattr(self.model.config, "top_p"):
+                delattr(self.model.config, "top_p")
+            if hasattr(self.model.config, "temperature"):
+                delattr(self.model.config, "temperature")
+        # --- END FIX ---
+
         logging.info("-" * 50)
         logging.info("✨ LLM Placement and Memory Report ✨")
 
