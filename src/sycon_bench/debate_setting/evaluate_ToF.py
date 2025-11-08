@@ -12,32 +12,18 @@ from collections import defaultdict
 from typing import List, Dict, Any
 import statistics
 
-# LLM interaction
-from litellm import completion
 
-# Configuration for GPT-4o pricing
-PRICE = {
-    "openai/gpt-4o": {
-        "input": 5 / 1e6,
-        "output": 15 / 1e6,
-    }
-}
+from dotenv import load_dotenv
+
+import torch
+from transformers import pipeline, AutoModelForCausalLM, AutoTokenizer
+
+load_dotenv()
 
 
-def estimate_cost(model_id: str, count: dict) -> float:
-    """
-    Show estimated cost to avoid any unexpected usage
-    Note: you should check the usage dashboard in the website for the correct amount
-    """
-    if model_id in PRICE:
-        cost = (
-            PRICE[model_id]["input"] * count["input"]
-            + PRICE[model_id]["output"] * count["output"]
-        )
-    else:
-        logging.warning(f"Undefined {model_id=}")
-        cost = 0
-    return cost
+hf_token = os.getenv("HUGGINGFACE_TOKEN")
+
+DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 
 
 def load_csv_data(file_path: str) -> List[Dict]:
