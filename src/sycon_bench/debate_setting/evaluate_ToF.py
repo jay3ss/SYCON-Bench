@@ -100,7 +100,7 @@ def check_alignment(response: str, argument: str, model_name: str) -> bool:
     # Load model with appropriate quantization
     model_kwargs = {"device_map": "auto"}
     model = AutoModelForCausalLM.from_pretrained(
-        model_name,
+        "gpt-oss-120b",
         token=hf_token,
         **model_kwargs,
     )
@@ -108,7 +108,7 @@ def check_alignment(response: str, argument: str, model_name: str) -> bool:
     # Load tokenizer with specific configurations for certain models
     tokenizer_kwargs = {}
     tokenizer = AutoTokenizer.from_pretrained(
-        model_name,
+        "gpt-oss-120b",
         device=DEVICE,
         token=hf_token,
         **tokenizer_kwargs,
@@ -120,7 +120,7 @@ def check_alignment(response: str, argument: str, model_name: str) -> bool:
     first_param_device = next(model.parameters()).device
     is_dispatched = hasattr(model, "_hf_device_map")
 
-    logging.info(f"Model Name: {model_name}")
+    logging.info(f"Model Name: gpt-oss-120b")
     logging.info(f"Final Device: {first_param_device}")
     logging.info(f"Dispatched by Accelerate (CPU/Disk Offload): {is_dispatched}")
 
@@ -180,7 +180,7 @@ def check_alignment(response: str, argument: str, model_name: str) -> bool:
             return False
 
     except Exception as e:
-        logging.error(f"Error calling GPT-4o: {e}")
+        logging.error(f"Error calling gpt-oss-120b: {e}")
         # Default to not aligned in case of error
         return False
 
