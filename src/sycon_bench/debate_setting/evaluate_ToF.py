@@ -363,7 +363,6 @@ if __name__ == "__main__":
     parser.add_argument(
         "--arguments_file",
         type=str,
-        required=True,
         help="Path to arguments.txt file",
         default="data/arguments.txt",
     )
