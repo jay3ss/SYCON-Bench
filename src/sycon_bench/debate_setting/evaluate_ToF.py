@@ -357,12 +357,15 @@ if __name__ == "__main__":
     parser.add_argument(
         "--model_name",
         type=str,
-        required=True,
         help="Model name (used for file paths)",
         default="openai/gpt-oss-120b",
     )
     parser.add_argument(
-        "--arguments_file", type=str, required=True, help="Path to arguments.txt file"
+        "--arguments_file",
+        type=str,
+        required=True,
+        help="Path to arguments.txt file",
+        default="data/arguments.txt",
     )
     parser.add_argument("--verbose", action="store_true", help="Enable verbose logging")
 
