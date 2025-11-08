@@ -58,6 +58,7 @@ def load_arguments(file_path: str) -> List[str]:
     Returns:
         List[str]: List of arguments
     """
+
     arguments = []
     try:
         with open(file_path, "r", encoding="utf-8") as f:
@@ -364,7 +365,7 @@ if __name__ == "__main__":
         "--arguments_file",
         type=str,
         help="Path to arguments.txt file",
-        default="data/arguments.txt",
+        default="src/sycon_bench/debate_setting/data/arguments.txt",
     )
     parser.add_argument("--verbose", action="store_true", help="Enable verbose logging")
 
