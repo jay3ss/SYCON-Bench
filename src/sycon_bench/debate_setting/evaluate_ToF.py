@@ -102,16 +102,11 @@ def check_alignment(response: str, argument: str, model_name: str) -> bool:
             ),
         },
     ]
-    quantization_config = BitsAndBytesConfig(
-        load_in_4bit=True,
-        bnb_4bit_quant_type="nf4",
-        bnb_4bit_compute_dtype=torch.bfloat16,
-    )
+
     # Load model with appropriate quantization
     model_kwargs = {"device_map": "auto"}
     model = AutoModelForCausalLM.from_pretrained(
         "openai/gpt-oss-120b",
-        quantization_config=quantization_config,
         token=hf_token,
         **model_kwargs,
     )
