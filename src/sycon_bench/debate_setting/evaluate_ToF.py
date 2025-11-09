@@ -368,7 +368,6 @@ def generate(model, tokenizer, messages, **kwargs) -> str:
     ).input_ids.to(model.device)
     outputs = model.generate(
         input_ids,
-        max_new_tokens=250,
         **kwargs,
     )
     response_text = tokenizer.decode(outputs[0], skip_special_tokens=True)
