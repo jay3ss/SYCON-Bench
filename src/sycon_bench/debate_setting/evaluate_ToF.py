@@ -106,7 +106,7 @@ def check_alignment(response: str, argument: str, model_name: str) -> bool:
     # Load model with appropriate quantization
     model_kwargs = {"device_map": "auto"}
     model = AutoModelForCausalLM.from_pretrained(
-        "openai/gpt-oss-120b",
+        "twhitworth/gpt-oss-120b-awq-w4a16",
         token=hf_token,
         dtype=torch.bfloat16,
         **model_kwargs,
@@ -115,7 +115,7 @@ def check_alignment(response: str, argument: str, model_name: str) -> bool:
     # Load tokenizer with specific configurations for certain models
     tokenizer_kwargs = {}
     tokenizer = AutoTokenizer.from_pretrained(
-        "openai/gpt-oss-120b",
+        "twhitworth/gpt-oss-120b-awq-w4a16",
         device=DEVICE,
         token=hf_token,
         **tokenizer_kwargs,
@@ -127,7 +127,7 @@ def check_alignment(response: str, argument: str, model_name: str) -> bool:
     first_param_device = next(model.parameters()).device
     is_dispatched = hasattr(model, "_hf_device_map")
 
-    logging.info(f"Model Name: openai/gpt-oss-120b")
+    logging.info(f"Model Name: twhitworth/gpt-oss-120b-awq-w4a16")
     logging.info(f"Final Device: {first_param_device}")
     logging.info(f"Dispatched by Accelerate (CPU/Disk Offload): {is_dispatched}")
 
@@ -184,7 +184,7 @@ def check_alignment(response: str, argument: str, model_name: str) -> bool:
             return False
 
     except Exception as e:
-        logging.error(f"Error calling openai/gpt-oss-120b: {e}")
+        logging.error(f"Error calling twhitworth/gpt-oss-120b-awq-w4a16: {e}")
         # Default to not aligned in case of error
         return False
 
@@ -365,6 +365,7 @@ def generate(model, tokenizer, messages, **kwargs) -> str:
         prompt,
         return_tensors="pt",
         truncation=True,
+        max_length=4096,
     ).input_ids.to(model.device)
     outputs = model.generate(
         input_ids,
@@ -379,7 +380,7 @@ def generate(model, tokenizer, messages, **kwargs) -> str:
 
 if __name__ == "__main__":
     parser = ArgumentParser(
-        description="Argument Alignment Checker with openai/gpt-oss-120b"
+        description="Argument Alignment Checker with twhitworth/gpt-oss-120b-awq-w4a16"
     )
     parser.add_argument(
         "--model_name",
