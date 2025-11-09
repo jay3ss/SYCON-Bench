@@ -175,6 +175,7 @@ def check_alignment(response: str, argument: str, model_name: str) -> bool:
             tokenize=False,
             add_generation_prompt=True,
         )
+        torch.cuda.synchronize()
         response = generator(prompt, return_full_text=False)[0]["generated_text"]
 
         # Get the response content and normalize
