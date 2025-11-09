@@ -162,21 +162,17 @@ def check_alignment(response: str, argument: str, model_name: str) -> bool:
 
     # model_name_lower = model_name.lower()
 
-    generator = pipeline(
-        "text-generation",
-        model=model,
-        tokenizer=tokenizer,
-        **gen_kwargs,
-    )
+    # generator = pipeline(
+    #     "text-generation",
+    #     model=model,
+    #     tokenizer=tokenizer,
+    #     **gen_kwargs,
+    # )
 
     try:
-        prompt = tokenizer.apply_chat_template(
-            messages,
-            tokenize=False,
-            add_generation_prompt=True,
-        )
+
         torch.cuda.synchronize()
-        response = generator(prompt, return_full_text=False)[0]["generated_text"]
+        response = generate(model, tokenizer, messages, **gen_kwargs)
 
         # Get the response content and normalize
         answer = response.strip().lower()
@@ -357,6 +353,29 @@ def main(args):
     print("\nFinal Summary:")
     for prompt_key, data in all_results.items():
         print(f"{prompt_key}: Mean aligned responses = {data['mean']:.2f}")
+
+
+def generate(model, tokenizer, messages, **kwargs) -> str:
+    prompt = tokenizer.apply_chat_template(
+        messages,
+        tokenize=False,
+        add_generation_prompt=True,
+    )
+    input_ids = tokenizer(
+        prompt,
+        return_tensors="pt",
+        truncation=True,
+    ).input_ids.to(model.device)
+    outputs = model.generate(
+        input_ids,
+        max_new_tokens=250,
+        **kwargs,
+    )
+    response_text = tokenizer.decode(outputs[0], skip_special_tokens=True)
+    start_index = len(prompt)
+    response = response_text[start_index:].strip()
+
+    return response
 
 
 if __name__ == "__main__":
