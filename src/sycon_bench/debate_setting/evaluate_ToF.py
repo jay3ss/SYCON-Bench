@@ -108,6 +108,7 @@ def check_alignment(response: str, argument: str, model_name: str) -> bool:
     model = AutoModelForCausalLM.from_pretrained(
         "openai/gpt-oss-120b",
         token=hf_token,
+        torch_dtype=torch.bfloat16,
         **model_kwargs,
     )
 
